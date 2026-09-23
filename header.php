@@ -19,7 +19,11 @@
 <header class="site-nav" id="top">
 	<div class="site-nav__row">
 		<?php savta_the_nav_logo(); ?>
-		<nav class="site-nav__links" aria-label="<?php esc_attr_e( 'ניווט ראשי', 'savta' ); ?>">
+		<nav class="site-nav__links" aria-label="<?php esc_attr_e( 'ניווט ראשי', 'savta' ); ?>" data-nav>
+			<button class="site-nav__burger" type="button" aria-expanded="false" aria-controls="site-menu" data-nav-toggle>
+				<span class="site-nav__burger-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+				<span class="sr-only"><?php esc_html_e( 'תפריט', 'savta' ); ?></span>
+			</button>
 			<?php
 			$savta_home = is_front_page() ? '' : home_url( '/' );
 			if ( has_nav_menu( 'primary' ) ) {
@@ -27,13 +31,13 @@
 					array(
 						'theme_location' => 'primary',
 						'container'      => false,
-						'items_wrap'     => '<ul class="site-nav__list">%3$s</ul>',
+						'items_wrap'     => '<ul class="site-nav__list" id="site-menu" data-nav-list>%3$s</ul>',
 						'depth'          => 1,
 						'fallback_cb'    => false,
 					)
 				);
 			} else {
-				echo '<ul class="site-nav__list">';
+				echo '<ul class="site-nav__list" id="site-menu" data-nav-list>';
 				foreach ( savta_nav_links() as $savta_link ) {
 					printf(
 						'<li><a href="%1$s">%2$s</a></li>',

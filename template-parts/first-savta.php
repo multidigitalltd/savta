@@ -11,16 +11,17 @@ defined( 'ABSPATH' ) || exit;
 $savta_first_image = (int) get_theme_mod( 'savta_first_savta_image', 0 );
 ?>
 <section class="section band band--blush" aria-labelledby="first-title">
-	<div class="container first" data-reveal>
+	<div class="container first">
 		<div class="first__text">
 			<?php savta_the_section_number( '05', 'section-num--deep' ); ?>
-			<h2 class="h2 h2--sm first__title" id="first-title"><?php esc_html_e( '"הסבתא" הראשונה שלנו', 'savta' ); ?></h2>
-			<p class="body-18 mb-18"><?php esc_html_e( '"הסבתא" הראשונה במיזם היא אשת חינוך ותיקה, עם למעלה מ־40 שנות ניסיון בחינוך, מתוכן 13 שנים כמנהלת בבית ספר ידוע.', 'savta' ); ?></p>
-			<p class="body-18 mb-18"><?php esc_html_e( 'לאורך השנים היא ליוותה תלמידות, הורים וצוותים חינוכיים, מתוך חכמה, רגישות, אחריות והבנה עמוקה לאנשים.', 'savta' ); ?></p>
-			<p class="body-18 mb-28"><?php esc_html_e( 'היום היא מביאה אל המיזם את ניסיון החיים, הלב הרחב והיכולת המיוחדת שלה להקשיב — כדי להיות שם עבור מי שצריכה שיחה טובה, רגועה ומחזקת.', 'savta' ); ?></p>
-			<p class="first__quote"><?php esc_html_e( 'לא כמטפלת. לא כשופטת. אלא כסבתא מקשיבה — עם לב פתוח ונוכחות טובה.', 'savta' ); ?></p>
+			<h2 class="h2 h2--sm first__title" id="first-title" <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( '"הסבתא" הראשונה שלנו', 'savta' ); ?></h2>
+			<p class="body-18 mb-18" <?php echo savta_reveal( 'up', 0.1 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( '"הסבתא" הראשונה במיזם היא אשת חינוך ותיקה, עם למעלה מ־40 שנות ניסיון בחינוך, מתוכן 13 שנים כמנהלת בבית ספר ידוע.', 'savta' ); ?></p>
+			<p class="body-18 mb-18" <?php echo savta_reveal( 'up', 0.2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'לאורך השנים היא ליוותה תלמידות, הורים וצוותים חינוכיים, מתוך חכמה, רגישות, אחריות והבנה עמוקה לאנשים.', 'savta' ); ?></p>
+			<p class="body-18 mb-28" <?php echo savta_reveal( 'up', 0.3 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'היום היא מביאה אל המיזם את ניסיון החיים, הלב הרחב והיכולת המיוחדת שלה להקשיב — כדי להיות שם עבור מי שצריכה שיחה טובה, רגועה ומחזקת.', 'savta' ); ?></p>
+			<p class="first__quote" <?php echo savta_reveal( 'up', 0.4 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'לא כמטפלת. לא כשופטת. אלא כסבתא מקשיבה — עם לב פתוח ונוכחות טובה.', 'savta' ); ?></p>
 		</div>
 		<div class="first__photo">
+			<div class="window-wrap" <?php echo savta_reveal( 'scale', 0.15 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<div class="window window--side first__window" data-window>
 				<?php if ( $savta_first_image && wp_attachment_is_image( $savta_first_image ) ) : ?>
 					<?php
@@ -46,6 +47,7 @@ $savta_first_image = (int) get_theme_mod( 'savta_first_savta_image', 0 );
 						<span class="placeholder__caption"><?php esc_html_e( 'איור: סבתא יושבת על ספסל', 'savta' ); ?></span>
 					</div>
 				<?php endif; ?>
+			</div>
 			</div>
 		</div>
 	</div>

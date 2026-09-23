@@ -8,7 +8,9 @@
  *     [data-progress-fill] [data-progress-step] [data-progress-dot]
  *   [data-faq] > [data-faq-q] + [data-faq-a]   accordion (one open at a time)
  *   [data-cal]              appointment picker (radio inputs, name="slot")
+ *   [data-nav] > [data-nav-toggle] + [data-nav-list]   mobile menu
  *   [data-form]             booking form: in-place submit with fresh nonce
+ *   data-reveal values: up (default) | scale | right | left | fade; --reveal-delay staggers
  * Configuration arrives in window.savtaConfig (see inc/assets.php).
  */
 (function () {
@@ -214,7 +216,28 @@
     close(false);
   }
 
-  /* ---------- 7. Booking form: in-place submit ---------- */
+  /* ---------- 7. Mobile navigation (hamburger) ---------- */
+  function initNav() {
+    var nav = document.querySelector('[data-nav]');
+    if (!nav) { return; }
+    var toggle = nav.querySelector('[data-nav-toggle]');
+    var list = nav.querySelector('[data-nav-list]');
+    if (!toggle || !list) { return; }
+    function setOpen(open) {
+      list.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    toggle.addEventListener('click', function () { setOpen(!list.classList.contains('is-open')); });
+    list.addEventListener('click', function (e) { if (e.target.closest('a')) { setOpen(false); } });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && list.classList.contains('is-open')) { setOpen(false); toggle.focus(); }
+    });
+    document.addEventListener('click', function (e) {
+      if (list.classList.contains('is-open') && !nav.contains(e.target)) { setOpen(false); }
+    });
+  }
+
+  /* ---------- 8. Booking form: in-place submit ---------- */
   function initForm() {
     var form = document.querySelector('[data-form]');
     if (!form || !window.fetch || !window.FormData) { return; }
@@ -326,6 +349,7 @@
     initReveal();
     initFaq();
     initCalendar();
+    initNav();
     initForm();
     parallax();
     progress();

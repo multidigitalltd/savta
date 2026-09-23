@@ -12,14 +12,14 @@ $savta_state = savta_form_state();
 ?>
 <section class="section signup" id="signup" aria-labelledby="signup-title">
 	<div class="container signup__grid">
-		<div class="signup__intro" data-reveal>
+		<div class="signup__intro">
 			<?php savta_the_section_number( '08', 'section-num--deep' ); ?>
-			<h2 class="h2 signup__title" id="signup-title"><?php esc_html_e( 'רוצה לתאם', 'savta' ); ?><br><?php esc_html_e( 'פגישה עם הסבתא?', 'savta' ); ?></h2>
-			<p class="signup__lede"><?php esc_html_e( 'אנחנו פותחים את השיחות הראשונות בהדרגה ובאחריות. אפשר להשאיר פרטים, ונחזור אלייך לתיאום שיחה או להסבר נוסף.', 'savta' ); ?></p>
-			<p class="signup__limited"><?php esc_html_e( 'מספר המקומות בשלב הראשון מוגבל.', 'savta' ); ?></p>
+			<h2 class="h2 signup__title" id="signup-title" <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'רוצה לתאם', 'savta' ); ?><br><?php esc_html_e( 'פגישה עם הסבתא?', 'savta' ); ?></h2>
+			<p class="signup__lede" <?php echo savta_reveal( 'up', 0.1 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'אנחנו פותחים את השיחות הראשונות בהדרגה ובאחריות. אפשר להשאיר פרטים, ונחזור אלייך לתיאום שיחה או להסבר נוסף.', 'savta' ); ?></p>
+			<p class="signup__limited" <?php echo savta_reveal( 'up', 0.2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'מספר המקומות בשלב הראשון מוגבל.', 'savta' ); ?></p>
 			<?php savta_the_window( 'signup', 'leaf', array( 'sizes' => '(min-width: 760px) 420px, 100vw' ) ); ?>
 		</div>
-		<div class="signup__form-col">
+		<div class="signup__form-col" <?php echo savta_reveal( 'scale', 0.2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php if ( 'sent' === $savta_state ) : ?>
 				<?php get_template_part( 'template-parts/thanks' ); ?>
 			<?php else : ?>

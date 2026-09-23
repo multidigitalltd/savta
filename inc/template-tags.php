@@ -55,9 +55,24 @@ function savta_the_image( string $key, array $attrs = array() ): void {
  * @return void
  */
 function savta_the_window( string $key, string $shape, array $attrs = array() ): void {
-	echo '<div class="window window--' . esc_attr( $shape ) . '" data-window>';
+	echo '<div class="window-wrap" ' . savta_reveal( 'scale', 0.15 ) . '><div class="window window--' . esc_attr( $shape ) . '" data-window>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- savta_reveal() escapes.
 	savta_the_image( $key, array_merge( array( 'class' => 'window__img' ), $attrs ) );
-	echo '</div>';
+	echo '</div></div>';
+}
+
+/**
+ * Build the entrance-animation attributes for an element.
+ *
+ * @param string $type  up (default) | scale | right | left | fade.
+ * @param float  $delay Stagger delay in seconds.
+ * @return string Escaped attribute string.
+ */
+function savta_reveal( string $type = 'up', float $delay = 0 ): string {
+	$attr = 'data-reveal="' . esc_attr( $type ) . '"';
+	if ( $delay > 0 ) {
+		$attr .= ' style="--reveal-delay:' . esc_attr( rtrim( rtrim( number_format( $delay, 2, '.', '' ), '0' ), '.' ) ) . 's"';
+	}
+	return $attr;
 }
 
 /**

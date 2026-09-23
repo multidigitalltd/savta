@@ -8,8 +8,8 @@
 defined( 'ABSPATH' ) || exit;
 ?>
 <section class="section band band--sand" aria-labelledby="faq-title">
-	<div class="container faq" id="faq" data-reveal>
-		<div class="faq__intro">
+	<div class="container faq" id="faq">
+		<div class="faq__intro" <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php savta_the_section_number( '07', 'section-num--deep' ); ?>
 			<h2 class="h2 faq__title" id="faq-title"><?php esc_html_e( 'שאלות', 'savta' ); ?><br><?php esc_html_e( 'שרצית לשאול', 'savta' ); ?></h2>
 			<p class="faq__lede"><?php esc_html_e( 'ואם נשארה שאלה שלא ענינו עליה — אפשר להשאיר פרטים ונחזור אלייך.', 'savta' ); ?></p>
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 		<div class="faq__list">
 			<?php foreach ( savta_faqs() as $savta_i => $savta_faq ) : ?>
 				<?php $savta_id = 'faq-' . ( $savta_i + 1 ); ?>
-				<div class="faq__item" data-faq>
+				<div class="faq__item" data-faq <?php echo savta_reveal( 'up', $savta_i * 0.06 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<h3 class="faq__q">
 						<button class="faq__btn" type="button" id="<?php echo esc_attr( $savta_id . '-q' ); ?>" aria-expanded="false" aria-controls="<?php echo esc_attr( $savta_id . '-a' ); ?>" data-faq-q>
 							<span class="faq__mark" data-faq-mark aria-hidden="true">+</span>

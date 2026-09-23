@@ -62,25 +62,6 @@ function savta_customize_register( WP_Customize_Manager $wp_customize ): void {
 			)
 		)
 	);
-
-	$wp_customize->add_setting(
-		'savta_area_note',
-		array(
-			'type'              => 'theme_mod',
-			'default'           => '',
-			'sanitize_callback' => 'sanitize_text_field',
-			'capability'        => 'manage_options',
-		)
-	);
-	$wp_customize->add_control(
-		'savta_area_note',
-		array(
-			'label'       => __( 'אזור פעילות (טקסט קצר)', 'savta' ),
-			'description' => __( 'ריק = "בני ברק. בעזרת ה׳, הפעילות תורחב בהמשך לערים נוספות."', 'savta' ),
-			'section'     => 'savta_settings',
-			'type'        => 'text',
-		)
-	);
 }
 add_action( 'customize_register', 'savta_customize_register' );
 

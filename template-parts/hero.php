@@ -182,7 +182,6 @@ $savta_logo_petals = array(
 		'opacity' => '0.42',
 	),
 );
-$savta_area_note   = (string) get_theme_mod( 'savta_area_note', '' );
 ?>
 <section class="hero" aria-labelledby="hero-title">
 	<div class="fall" aria-hidden="true">
@@ -196,17 +195,17 @@ $savta_area_note   = (string) get_theme_mod( 'savta_area_note', '' );
 		?>
 	</div>
 	<div class="hero__grid">
-		<div class="hero__text" data-reveal>
-			<p class="hero__eyebrow">
+		<div class="hero__text">
+			<p class="hero__eyebrow" <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<span class="hero__kicker"><?php esc_html_e( 'מיזם חברתי למען הקהילה', 'savta' ); ?></span>
 				<span class="hero__lead-by"><?php esc_html_e( 'בהובלת אפרת ברזל', 'savta' ); ?></span>
 			</p>
-			<h1 class="hero__title" id="hero-title"><?php esc_html_e( 'סבתא', 'savta' ); ?><br><?php esc_html_e( 'על הספסל', 'savta' ); ?></h1>
+			<h1 class="hero__title" id="hero-title" <?php echo savta_reveal( 'up', 0.1 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'סבתא', 'savta' ); ?><br><?php esc_html_e( 'על הספסל', 'savta' ); ?></h1>
 			<div class="hero__underline" data-draw aria-hidden="true">
 				<svg viewBox="0 0 300 12" fill="none" stroke="#C98573" stroke-width="3" stroke-linecap="round" focusable="false"><path d="M3 8 C70 3 150 3 297 6"/></svg>
 			</div>
-			<p class="hero__lede"><?php esc_html_e( 'לפעמים כל מה שצריך הוא מישהי טובה שתשב איתך רגע — ותקשיב באמת.', 'savta' ); ?></p>
-			<div class="hero__actions">
+			<p class="hero__lede" <?php echo savta_reveal( 'up', 0.2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'לפעמים כל מה שצריך הוא מישהי טובה שתשב איתך רגע — ותקשיב באמת.', 'savta' ); ?></p>
+			<div class="hero__actions" <?php echo savta_reveal( 'up', 0.3 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<a class="btn btn--sage" href="#signup"><?php esc_html_e( 'אני רוצה לדבר עם הסבתא', 'savta' ); ?></a>
 				<a class="text-link" href="#how-it-works"><?php esc_html_e( 'איך זה עובד?', 'savta' ); ?></a>
 			</div>
@@ -224,6 +223,8 @@ $savta_area_note   = (string) get_theme_mod( 'savta_area_note', '' );
 			savta_the_image(
 				'logo',
 				array(
+					'data-reveal'   => 'scale',
+					'style'         => '--reveal-delay:.15s',
 					'class'         => 'hero__logo-img',
 					'loading'       => 'eager',
 					'fetchpriority' => 'high',
@@ -235,8 +236,8 @@ $savta_area_note   = (string) get_theme_mod( 'savta_area_note', '' );
 		</div>
 	</div>
 	<div class="hero__info">
-		<p class="hero__info-text"><?php esc_html_e( 'שיחה אישית, חינמית ודיסקרטית עם אישה עתירת ניסיון חיים, מכילה ומקשיבה — בעלת לב רחב ונוכחות מרגיעה. מקום לפרוק, לנשום, לעשות קצת סדר, ולצאת עם כוח נוסף לצעד הבא.', 'savta' ); ?></p>
-		<dl class="facts">
+		<p class="hero__info-text" <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'שיחה אישית, חינמית ודיסקרטית עם אישה עתירת ניסיון חיים, מכילה ומקשיבה — בעלת לב רחב ונוכחות מרגיעה. מקום לפרוק, לנשום, לעשות קצת סדר, ולצאת עם כוח נוסף לצעד הבא.', 'savta' ); ?></p>
+		<dl class="facts" <?php echo savta_reveal( 'up', 0.15 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<div class="facts__item">
 				<dt><?php esc_html_e( 'מסגרת', 'savta' ); ?></dt>
 				<dd><?php esc_html_e( 'פרויקט למען', 'savta' ); ?><br><?php esc_html_e( 'הקהילה', 'savta' ); ?></dd>
@@ -250,15 +251,5 @@ $savta_area_note   = (string) get_theme_mod( 'savta_area_note', '' );
 				<dd><?php esc_html_e( 'בתיאום מראש', 'savta' ); ?><br><?php esc_html_e( 'בלבד', 'savta' ); ?></dd>
 			</div>
 		</dl>
-		<div class="area">
-			<p class="area__label"><?php esc_html_e( 'אזור פעילות', 'savta' ); ?></p>
-			<p class="area__text">
-				<?php if ( $savta_area_note ) : ?>
-					<?php echo esc_html( $savta_area_note ); ?>
-				<?php else : ?>
-					<strong><?php esc_html_e( 'בני ברק.', 'savta' ); ?></strong> <?php esc_html_e( 'בעזרת ה׳, הפעילות תורחב בהמשך לערים נוספות.', 'savta' ); ?>
-				<?php endif; ?>
-			</p>
-		</div>
 	</div>
 </section>
