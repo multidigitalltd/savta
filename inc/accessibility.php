@@ -37,6 +37,21 @@ function savta_create_accessibility_page(): void {
 add_action( 'after_switch_theme', 'savta_create_accessibility_page' );
 
 /**
+ * Self-heal: if the page is missing (theme activated via WP-CLI, multisite,
+ * or the page was deleted), recreate it the next time an administrator
+ * loads wp-admin. One autoload-free option read on admin requests only.
+ *
+ * @return void
+ */
+function savta_ensure_accessibility_page(): void {
+	if ( ! current_user_can( 'manage_options' ) || wp_doing_ajax() ) {
+		return;
+	}
+	savta_create_accessibility_page();
+}
+add_action( 'admin_init', 'savta_ensure_accessibility_page' );
+
+/**
  * URL of the accessibility statement page, or empty string when missing.
  *
  * @return string

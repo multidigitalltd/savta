@@ -317,6 +317,9 @@
   }
 
   function init() {
+    var root = document.documentElement;
+    root.classList.replace('no-js', 'js');
+    root.classList.add('js-ready');
     windows = qsa('[data-window]');
     track = document.querySelector('[data-progress-track]');
     prepDraw();
