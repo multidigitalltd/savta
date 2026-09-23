@@ -365,6 +365,12 @@ main:focus { outline: none; }
 .entry-title { font-size: 26px; margin: 0 0 8px; }
 .entry { margin-bottom: 32px; }
 
+/* ---------- Dashboard switches ---------- */
+.no-anim [data-reveal] { opacity: 1 !important; transform: none !important; animation: none !important; transition: none !important; }
+.no-anim .hero__halo, .no-anim .petal, .no-anim .bird { animation: none !important; }
+.no-anim .window { transform: none !important; }
+.no-steam .steam { animation: none !important; opacity: 0; }
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

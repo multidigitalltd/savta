@@ -58,7 +58,7 @@ function savta_register_lead_cpt(): void {
 			),
 			'public'              => false,
 			'show_ui'             => true,
-			'show_in_menu'        => true,
+			'show_in_menu'        => 'savta-overview',
 			'show_in_rest'        => false,
 			'exclude_from_search' => true,
 			'publicly_queryable'  => false,

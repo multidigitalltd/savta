@@ -12,9 +12,9 @@ defined( 'ABSPATH' ) || exit;
 		<div class="quotes__head">
 			<div <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<?php savta_the_section_number( '06', 'section-num--deep' ); ?>
-				<h2 class="h2" id="quotes-title"><?php esc_html_e( 'משפטים שסבתא', 'savta' ); ?><br><?php esc_html_e( 'אומרת על הספסל', 'savta' ); ?></h2>
+				<h2 class="h2" id="quotes-title"><?php savta_e_br( 'quotes_title' ); ?></h2>
 			</div>
-			<p class="quotes__lede" <?php echo savta_reveal( 'up', 0.15 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'קחי אחד לדרך. אפשר גם להדפיס אותם ולתלות על המקרר.', 'savta' ); ?></p>
+			<p class="quotes__lede" <?php echo savta_reveal( 'up', 0.15 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php savta_e( 'quotes_lede' ); ?></p>
 		</div>
 		<ul class="quotes">
 			<?php foreach ( savta_quotes() as $savta_i => $savta_quote ) : ?>

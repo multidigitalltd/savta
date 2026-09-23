@@ -14,9 +14,11 @@ $savta_state = savta_form_state();
 	<div class="container signup__grid">
 		<div class="signup__intro">
 			<?php savta_the_section_number( '08', 'section-num--deep' ); ?>
-			<h2 class="h2 signup__title" id="signup-title" <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'רוצה לתאם', 'savta' ); ?><br><?php esc_html_e( 'פגישה עם הסבתא?', 'savta' ); ?></h2>
-			<p class="signup__lede" <?php echo savta_reveal( 'up', 0.1 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'אנחנו פותחים את השיחות הראשונות בהדרגה ובאחריות. אפשר להשאיר פרטים, ונחזור אלייך לתיאום שיחה או להסבר נוסף.', 'savta' ); ?></p>
-			<p class="signup__limited" <?php echo savta_reveal( 'up', 0.2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'מספר המקומות בשלב הראשון מוגבל.', 'savta' ); ?></p>
+			<h2 class="h2 signup__title" id="signup-title" <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php savta_e_br( 'signup_title' ); ?></h2>
+			<p class="signup__lede" <?php echo savta_reveal( 'up', 0.1 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php savta_e( 'signup_lede' ); ?></p>
+			<?php if ( '' !== savta_text( 'signup_limited' ) ) : ?>
+			<p class="signup__limited" <?php echo savta_reveal( 'up', 0.2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php savta_e( 'signup_limited' ); ?></p>
+			<?php endif; ?>
 			<?php savta_the_window( 'signup', 'leaf', array( 'sizes' => '(min-width: 760px) 420px, 100vw' ) ); ?>
 		</div>
 		<div class="signup__form-col" <?php echo savta_reveal( 'scale', 0.2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -66,6 +68,7 @@ $savta_state = savta_form_state();
 						</div>
 					</fieldset>
 
+					<?php if ( savta_setting( 'calendar_enabled' ) ) : ?>
 					<div class="cal" data-cal>
 						<p class="field__label cal__label" id="cal-label"><?php esc_html_e( 'מתי נוח לך?', 'savta' ); ?></p>
 						<button class="cal__toggle" type="button" aria-expanded="false" aria-controls="cal-panel" aria-describedby="cal-label" data-cal-toggle>
@@ -74,13 +77,14 @@ $savta_state = savta_form_state();
 							<span class="cal__hint" data-cal-toggle-text><?php esc_html_e( 'לצפייה ביומן', 'savta' ); ?></span>
 						</button>
 						<div class="cal__panel" id="cal-panel" data-cal-panel hidden>
-							<p class="cal__note"><?php esc_html_e( 'השיחות מתקיימות בימי שני ושלישי בערב, בין 20:00 ל־22:30. בחרי מועד ונאשר אותו בשיחה.', 'savta' ); ?></p>
+							<p class="cal__note"><?php savta_e( 'cal_note' ); ?></p>
 							<div class="cal__days" data-cal-days></div>
-							<p class="cal__note cal__note--small"><?php esc_html_e( 'לא מצאת מועד מתאים? אפשר לכתוב לנו בשדה למטה ונמצא זמן אחר.', 'savta' ); ?></p>
+							<p class="cal__note cal__note--small"><?php savta_e( 'cal_note_small' ); ?></p>
 						</div>
 						<p class="field__error" id="f-slot-err" data-error-for="slot"></p>
 						<p class="sr-only" aria-live="polite" data-cal-announce></p>
 					</div>
+					<?php endif; ?>
 
 					<div class="field">
 						<label class="field__label" for="f-topic"><?php esc_html_e( 'בכמה מילים: על מה היית רוצה לשוחח?', 'savta' ); ?></label>
@@ -91,12 +95,12 @@ $savta_state = savta_form_state();
 					<div class="field">
 						<label class="consent">
 							<input type="checkbox" name="consent" value="1" required aria-describedby="f-consent-err" aria-required="true">
-							<span><?php esc_html_e( 'ידוע לי שמדובר בשיחת הקשבה קהילתית שאינה מחליפה טיפול מקצועי.', 'savta' ); ?></span>
+							<span><?php savta_e( 'form_consent' ); ?></span>
 						</label>
 						<p class="field__error" id="f-consent-err" data-error-for="consent"></p>
 					</div>
 
-					<button class="btn btn--rose btn--submit" type="submit" data-submit><?php esc_html_e( 'אני רוצה שיחזרו אליי', 'savta' ); ?></button>
+					<button class="btn btn--rose btn--submit" type="submit" data-submit><?php savta_e( 'form_submit' ); ?></button>
 					</div>
 				</form>
 			<?php endif; ?>

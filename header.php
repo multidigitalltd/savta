@@ -48,7 +48,7 @@
 				echo '</ul>';
 			}
 			?>
-			<a class="btn btn--rose btn--nav" href="<?php echo esc_url( $savta_home . '#signup' ); ?>"><?php esc_html_e( 'לדבר עם הסבתא', 'savta' ); ?></a>
+			<a class="btn btn--rose btn--nav" href="<?php echo esc_url( $savta_home . '#signup' ); ?>"><?php savta_e( 'nav_cta' ); ?></a>
 		</nav>
 	</div>
 </header>

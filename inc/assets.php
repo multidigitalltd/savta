@@ -64,6 +64,8 @@ function savta_js_config(): array {
 		'days'     => savta_slot_days(),
 		'dayCount' => savta_slot_day_count(),
 		'taken'    => savta_taken_slots(),
+		'blocked'  => savta_slot_blocked_dates(),
+		'animate'  => (bool) savta_setting( 'animations' ),
 		'i18n'     => array(
 			'openCal'     => __( 'לצפייה ביומן', 'savta' ),
 			'closeCal'    => __( 'סגירה', 'savta' ),
@@ -72,11 +74,11 @@ function savta_js_config(): array {
 			/* translators: %s: the chosen appointment slot label. */
 			'selected'    => __( 'נבחר מועד: %s', 'savta' ),
 			'sending'     => __( 'שולחים…', 'savta' ),
-			'submit'      => __( 'אני רוצה שיחזרו אליי', 'savta' ),
+			'submit'      => savta_text( 'form_submit' ),
 			'genericErr'  => __( 'משהו השתבש בשליחה. אפשר לנסות שוב, או להתקשר אלינו.', 'savta' ),
 			'fixErrors'   => __( 'יש לתקן את השדות המסומנים ולשלוח שוב.', 'savta' ),
-			'thanksTitle' => __( 'תודה, הפרטים התקבלו.', 'savta' ),
-			'thanksText'  => __( 'נחזור אלייך בהקדם לתיאום או להסבר נוסף.', 'savta' ),
+			'thanksTitle' => savta_text( 'thanks_title' ),
+			'thanksText'  => savta_text( 'thanks_text' ),
 		),
 	);
 }
@@ -95,7 +97,7 @@ function savta_preload_head(): void {
 			esc_url( SAVTA_URI . '/assets/fonts/' . $font . '.woff2' )
 		);
 	}
-	if ( is_front_page() ) {
+	if ( is_front_page() && ! savta_image_id( 'img_logo' ) ) {
 		printf(
 			'<link rel="preload" href="%s" as="image" type="image/webp" fetchpriority="high">' . "\n",
 			esc_url( savta_image_url( 'logo-800.webp' ) )

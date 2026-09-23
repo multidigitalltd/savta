@@ -23,8 +23,8 @@ function savta_rate_limit(): array {
 	return (array) apply_filters(
 		'savta_rate_limit',
 		array(
-			'limit'  => 5,
-			'window' => HOUR_IN_SECONDS,
+			'limit'  => max( 1, (int) savta_setting( 'rate_limit' ) ),
+			'window' => max( 1, (int) savta_setting( 'rate_window' ) ) * MINUTE_IN_SECONDS,
 		)
 	);
 }
@@ -325,13 +325,31 @@ function savta_notify_lead( int $lead_id, array $data ): void {
 }
 
 /**
+ * Recipient list for lead notifications (dashboard setting, legacy Customizer
+ * value, then the admin email).
+ *
+ * @return string[]
+ */
+function savta_lead_recipients(): array {
+	$raw = (string) savta_setting( 'lead_emails' );
+	if ( '' === $raw ) {
+		$raw = (string) get_theme_mod( 'savta_lead_email', '' );
+	}
+	$emails = array_filter( array_map( 'sanitize_email', explode( ',', $raw ) ) );
+	if ( empty( $emails ) ) {
+		$emails = array( get_option( 'admin_email' ) );
+	}
+	return (array) apply_filters( 'savta_lead_recipients', array_values( $emails ) );
+}
+
+/**
  * Success response (JSON or redirect to the thank-you state).
  *
  * @return never
  */
 function savta_respond_success(): never {
 	if ( savta_wants_json() ) {
-		wp_send_json_success( array( 'message' => __( 'תודה, הפרטים התקבלו.', 'savta' ) ) );
+		wp_send_json_success( array( 'message' => savta_text( 'thanks_title' ) ) );
 	}
 	wp_safe_redirect( add_query_arg( 'savta', 'sent', home_url( '/' ) ) . '#signup' );
 	exit;

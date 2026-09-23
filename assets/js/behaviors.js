@@ -18,7 +18,7 @@
 
   var cfg = window.savtaConfig || {};
   var i18n = cfg.i18n || {};
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduce = (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) || cfg.animate === false;
   var raf = window.requestAnimationFrame || function (fn) { return setTimeout(fn, 16); };
 
   function qsa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
@@ -131,6 +131,7 @@
 
   function nextDays(count) {
     var days = cfg.days || {};
+    var blocked = cfg.blocked || [];
     var out = [];
     var d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -138,7 +139,7 @@
     var guard = 0;
     while (out.length < count && guard++ < 120) {
       var name = days[d.getDay()];
-      if (name) {
+      if (name && blocked.indexOf(isoLocal(d)) === -1) {
         out.push({ label: name + ', ' + d.getDate() + '.' + (d.getMonth() + 1), iso: isoLocal(d) });
       }
       d.setDate(d.getDate() + 1);

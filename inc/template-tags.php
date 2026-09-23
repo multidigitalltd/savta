@@ -20,7 +20,21 @@ function savta_the_image( string $key, array $attrs = array() ): void {
 	if ( empty( $images[ $key ] ) ) {
 		return;
 	}
-	$img   = $images[ $key ];
+	$img = $images[ $key ];
+	$id  = ! empty( $img['slot'] ) ? savta_image_id( $img['slot'] ) : 0;
+	if ( $id ) {
+		$attrs = array_merge(
+			array(
+				'alt'      => $img['alt'],
+				'loading'  => 'lazy',
+				'decoding' => 'async',
+			),
+			$attrs
+		);
+		unset( $attrs['srcset'] ); // WordPress generates srcset/sizes for attachments.
+		echo wp_get_attachment_image( $id, 'full', false, $attrs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core escapes.
+		return;
+	}
 	$base  = array(
 		'src'      => savta_image_url( $img['file'] ),
 		'width'    => $img['w'],

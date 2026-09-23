@@ -17,7 +17,8 @@ const SAVTA_TAKEN_SLOTS_TRANSIENT = 'savta_taken_slots';
  * @return string[]
  */
 function savta_slot_times(): array {
-	return apply_filters( 'savta_slot_times', array( '20:00–21:00', '21:10–22:10' ) );
+	$times = (array) savta_setting( 'slot_times' );
+	return apply_filters( 'savta_slot_times', $times ? array_values( $times ) : array( '20:00–21:00', '21:10–22:10' ) );
 }
 
 /**
@@ -26,13 +27,46 @@ function savta_slot_times(): array {
  * @return array<int, string>
  */
 function savta_slot_days(): array {
+	$names = savta_weekday_names();
+	$days  = array();
+	foreach ( (array) savta_setting( 'slot_days' ) as $d ) {
+		if ( isset( $names[ (int) $d ] ) ) {
+			$days[ (int) $d ] = $names[ (int) $d ];
+		}
+	}
 	return apply_filters(
 		'savta_slot_days',
-		array(
-			1 => __( 'יום שני', 'savta' ),
-			2 => __( 'יום שלישי', 'savta' ),
+		$days ? $days : array(
+			1 => $names[1],
+			2 => $names[2],
 		)
 	);
+}
+
+/**
+ * Hebrew weekday names keyed by weekday number (0 = Sunday).
+ *
+ * @return array<int, string>
+ */
+function savta_weekday_names(): array {
+	return array(
+		0 => __( 'יום ראשון', 'savta' ),
+		1 => __( 'יום שני', 'savta' ),
+		2 => __( 'יום שלישי', 'savta' ),
+		3 => __( 'יום רביעי', 'savta' ),
+		4 => __( 'יום חמישי', 'savta' ),
+		5 => __( 'יום שישי', 'savta' ),
+		6 => __( 'שבת', 'savta' ),
+	);
+}
+
+/**
+ * Dates (YYYY-MM-DD) the picker must skip (holidays etc.).
+ *
+ * @return string[]
+ */
+function savta_slot_blocked_dates(): array {
+	return (array) apply_filters( 'savta_slot_blocked_dates', array_values( (array) savta_setting( 'slot_blocked' ) ) );
 }
 
 /**
@@ -41,7 +75,7 @@ function savta_slot_days(): array {
  * @return int
  */
 function savta_slot_day_count(): int {
-	return (int) apply_filters( 'savta_slot_day_count', 4 );
+	return (int) apply_filters( 'savta_slot_day_count', max( 1, (int) savta_setting( 'slot_day_count' ) ) );
 }
 
 /**
@@ -50,7 +84,7 @@ function savta_slot_day_count(): int {
  * @return int
  */
 function savta_slot_horizon_days(): int {
-	return (int) apply_filters( 'savta_slot_horizon_days', 60 );
+	return (int) apply_filters( 'savta_slot_horizon_days', max( 7, (int) savta_setting( 'slot_horizon' ) ) );
 }
 
 /**
@@ -71,7 +105,7 @@ function savta_is_valid_slot( string $slot ): bool {
 	if ( ! $date || $date->format( 'Y-m-d' ) !== $m[1] ) {
 		return false;
 	}
-	if ( ! array_key_exists( (int) $date->format( 'w' ), savta_slot_days() ) ) {
+	if ( ! array_key_exists( (int) $date->format( 'w' ), savta_slot_days() ) || in_array( $m[1], savta_slot_blocked_dates(), true ) ) {
 		return false;
 	}
 	$today = new DateTimeImmutable( 'today', $tz );
@@ -98,11 +132,15 @@ function savta_taken_slots(): array {
 		$wpdb->prepare(
 			"SELECT pm.meta_value FROM {$wpdb->postmeta} pm
 			 INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-			 WHERE pm.meta_key = %s AND p.post_type = %s AND p.post_status = %s AND pm.meta_value >= %s",
+			 LEFT JOIN {$wpdb->postmeta} ps ON ps.post_id = p.ID AND ps.meta_key = %s
+			 WHERE pm.meta_key = %s AND p.post_type = %s AND p.post_status = %s AND pm.meta_value >= %s
+			 AND ( ps.meta_value IS NULL OR ps.meta_value <> %s )",
+			'_savta_status',
 			SAVTA_LEAD_META_SLOT,
 			SAVTA_LEAD_CPT,
 			'publish',
-			$today
+			$today,
+			'cancelled'
 		)
 	);
 	$slots = array_values( array_unique( array_map( 'strval', (array) $slots ) ) );

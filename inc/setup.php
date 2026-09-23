@@ -42,6 +42,23 @@ function savta_setup(): void {
 add_action( 'after_setup_theme', 'savta_setup' );
 
 /**
+ * Body classes for dashboard switches (animations off / steam off).
+ *
+ * @param array $classes Body classes.
+ * @return array
+ */
+function savta_body_classes( array $classes ): array {
+	if ( ! savta_setting( 'animations' ) ) {
+		$classes[] = 'no-anim';
+	}
+	if ( ! savta_setting( 'steam' ) ) {
+		$classes[] = 'no-steam';
+	}
+	return $classes;
+}
+add_filter( 'body_class', 'savta_body_classes' );
+
+/**
  * Remove head output the site never uses (fewer bytes, fewer requests).
  *
  * @return void

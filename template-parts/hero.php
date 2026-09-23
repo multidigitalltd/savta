@@ -183,7 +183,9 @@ $savta_logo_petals = array(
 	),
 );
 ?>
+<?php $savta_petals_on = (bool) savta_setting( 'petals' ); ?>
 <section class="hero" aria-labelledby="hero-title">
+	<?php if ( $savta_petals_on ) : ?>
 	<div class="fall" aria-hidden="true">
 		<?php
 		foreach ( $savta_hero_petals as $savta_petal ) {
@@ -194,24 +196,26 @@ $savta_logo_petals = array(
 		}
 		?>
 	</div>
+	<?php endif; ?>
 	<div class="hero__grid">
 		<div class="hero__text">
 			<p class="hero__eyebrow" <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-				<span class="hero__kicker"><?php esc_html_e( 'מיזם חברתי למען הקהילה', 'savta' ); ?></span>
-				<span class="hero__lead-by"><?php esc_html_e( 'בהובלת אפרת ברזל', 'savta' ); ?></span>
+				<span class="hero__kicker"><?php savta_e( 'hero_kicker' ); ?></span>
+				<span class="hero__lead-by"><?php savta_e( 'hero_lead_by' ); ?></span>
 			</p>
-			<h1 class="hero__title" id="hero-title" <?php echo savta_reveal( 'up', 0.1 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'סבתא', 'savta' ); ?><br><?php esc_html_e( 'על הספסל', 'savta' ); ?></h1>
+			<h1 class="hero__title" id="hero-title" <?php echo savta_reveal( 'up', 0.1 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php savta_e_br( 'hero_title' ); ?></h1>
 			<div class="hero__underline" data-draw aria-hidden="true">
 				<svg viewBox="0 0 300 12" fill="none" stroke="#C98573" stroke-width="3" stroke-linecap="round" focusable="false"><path d="M3 8 C70 3 150 3 297 6"/></svg>
 			</div>
-			<p class="hero__lede" <?php echo savta_reveal( 'up', 0.2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'לפעמים כל מה שצריך הוא מישהי טובה שתשב איתך רגע — ותקשיב באמת.', 'savta' ); ?></p>
+			<p class="hero__lede" <?php echo savta_reveal( 'up', 0.2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php savta_e( 'hero_lede' ); ?></p>
 			<div class="hero__actions" <?php echo savta_reveal( 'up', 0.3 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-				<a class="btn btn--sage" href="#signup"><?php esc_html_e( 'אני רוצה לדבר עם הסבתא', 'savta' ); ?></a>
-				<a class="text-link" href="#how-it-works"><?php esc_html_e( 'איך זה עובד?', 'savta' ); ?></a>
+				<a class="btn btn--sage" href="#signup"><?php savta_e( 'hero_btn' ); ?></a>
+				<a class="text-link" href="#how-it-works"><?php savta_e( 'hero_link' ); ?></a>
 			</div>
 		</div>
 		<div class="hero__logo">
 			<div class="hero__halo" aria-hidden="true"></div>
+			<?php if ( $savta_petals_on ) : ?>
 			<div class="fall" aria-hidden="true">
 				<?php
 				foreach ( $savta_logo_petals as $savta_petal ) {
@@ -219,6 +223,7 @@ $savta_logo_petals = array(
 				}
 				?>
 			</div>
+			<?php endif; ?>
 			<?php
 			savta_the_image(
 				'logo',
@@ -236,20 +241,17 @@ $savta_logo_petals = array(
 		</div>
 	</div>
 	<div class="hero__info">
-		<p class="hero__info-text" <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'שיחה אישית, חינמית ודיסקרטית עם אישה עתירת ניסיון חיים, מכילה ומקשיבה — בעלת לב רחב ונוכחות מרגיעה. מקום לפרוק, לנשום, לעשות קצת סדר, ולצאת עם כוח נוסף לצעד הבא.', 'savta' ); ?></p>
+		<p class="hero__info-text" <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php savta_e( 'hero_info' ); ?></p>
+		<?php $savta_facts = savta_list( 'hero_facts' ); ?>
+		<?php if ( $savta_facts ) : ?>
 		<dl class="facts" <?php echo savta_reveal( 'up', 0.15 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-			<div class="facts__item">
-				<dt><?php esc_html_e( 'מסגרת', 'savta' ); ?></dt>
-				<dd><?php esc_html_e( 'פרויקט למען', 'savta' ); ?><br><?php esc_html_e( 'הקהילה', 'savta' ); ?></dd>
-			</div>
-			<div class="facts__item facts__item--mid">
-				<dt><?php esc_html_e( 'עלות', 'savta' ); ?></dt>
-				<dd><?php esc_html_e( 'ללא עלות', 'savta' ); ?></dd>
-			</div>
-			<div class="facts__item">
-				<dt><?php esc_html_e( 'זימון', 'savta' ); ?></dt>
-				<dd><?php esc_html_e( 'בתיאום מראש', 'savta' ); ?><br><?php esc_html_e( 'בלבד', 'savta' ); ?></dd>
-			</div>
+			<?php foreach ( $savta_facts as $savta_i => $savta_fact ) : ?>
+				<div class="facts__item <?php echo 1 === $savta_i % 3 ? 'facts__item--mid' : ''; ?>">
+					<dt><?php echo esc_html( $savta_fact['label'] ?? '' ); ?></dt>
+					<dd><?php echo nl2br( esc_html( $savta_fact['value'] ?? '' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- esc_html before nl2br. ?></dd>
+				</div>
+			<?php endforeach; ?>
 		</dl>
+		<?php endif; ?>
 	</div>
 </section>

@@ -11,9 +11,11 @@ defined( 'ABSPATH' ) || exit;
 	<div class="container who" id="who">
 		<div class="who__first">
 			<?php savta_the_section_number( '03', 'section-num--sage' ); ?>
-			<h2 class="h2 who__title" id="who-title" <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'למי השיחה', 'savta' ); ?><br><?php esc_html_e( 'יכולה להתאים?', 'savta' ); ?></h2>
-			<p class="who__lede" <?php echo savta_reveal( 'up', 0.1 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'למי שמרגישה צורך לעצור רגע, לשתף, לפרוק או לעשות סדר — בלי לחץ, בלי ביקורת ובלי שיפוטיות.', 'savta' ); ?></p>
-			<p class="pill" <?php echo savta_reveal( 'up', 0.2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'מגיל 20 ומעלה', 'savta' ); ?></p>
+			<h2 class="h2 who__title" id="who-title" <?php echo savta_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php savta_e_br( 'who_title' ); ?></h2>
+			<p class="who__lede" <?php echo savta_reveal( 'up', 0.1 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php savta_e( 'who_lede' ); ?></p>
+			<?php if ( '' !== savta_text( 'who_pill' ) ) : ?>
+			<p class="pill" <?php echo savta_reveal( 'up', 0.2 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php savta_e( 'who_pill' ); ?></p>
+			<?php endif; ?>
 			<div class="window-wrap" <?php echo savta_reveal( 'scale', 0.3 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<div class="window window--circle who__window" data-window>
 				<?php
@@ -42,7 +44,7 @@ defined( 'ABSPATH' ) || exit;
 					</li>
 				<?php endforeach; ?>
 			</ul>
-			<p class="who__note" <?php echo savta_reveal( 'up', 0.5 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php esc_html_e( 'המיזם פועל כעת בבני ברק, ובעזרת ה׳ יורחב בהמשך לערים נוספות. מספר המקומות מוגבל והשיחות יתקיימו בהדרגה ובאחריות.', 'savta' ); ?></p>
+			<p class="who__note" <?php echo savta_reveal( 'up', 0.5 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>><?php savta_e( 'who_note' ); ?></p>
 		</div>
 	</div>
 </section>
