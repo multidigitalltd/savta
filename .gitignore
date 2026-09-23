@@ -1,0 +1,11 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Dependencies / tooling
+vendor/
+node_modules/
+.phpcs.cache
+*.log

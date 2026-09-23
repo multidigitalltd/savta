@@ -1,0 +1,18 @@
+/*
+Theme Name: Savta al HaSafsal
+Theme URI: https://github.com/multidigitalltd/savta
+Author: Multi Digital
+Author URI: https://multidigital.co.il
+Description: תבנית עמוד-נחיתה בעברית (RTL) למיזם "סבתא על הספסל". תבנית רזה ללא בוני עמודים, נגישה (WCAG 2.2 AA / ת"י 5568), מאובטחת ומהירה. כל העיצוב נטען מ-assets/css/theme.min.css.
+Version: 1.0.0
+Requires at least: 6.5
+Tested up to: 7.1
+Requires PHP: 8.1
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: savta
+Tags: one-column, custom-logo, rtl-language-support, accessibility-ready, translation-ready
+*/
+
+/* This file holds the theme header only. Styles live in assets/css/theme.css (source)
+   and assets/css/theme.min.css (enqueued). Run `php bin/build.php` after editing. */

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<ruleset name="Savta">
+	<description>WordPress Coding Standards for the Savta al HaSafsal theme.</description>
+
+	<file>.</file>
+	<exclude-pattern>/bin/*</exclude-pattern>
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+
+	<arg value="sp"/>
+	<arg name="colors"/>
+	<arg name="extensions" value="php"/>
+
+	<config name="minimum_wp_version" value="6.5"/>
+	<config name="testVersion" value="8.1-"/>
+
+	<rule ref="WordPress"/>
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="savta"/>
+			</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.Security.NonceVerification">
+		<properties>
+			<property name="customNonceVerificationFunctions" type="array">
+				<element value="savta_verify_nonce"/>
+			</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="savta"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

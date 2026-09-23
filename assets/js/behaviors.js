@@ -1,0 +1,338 @@
+/*!
+ * Savta al HaSafsal – vanilla JS behaviours (no dependencies).
+ * Markup contract (data attributes):
+ *   [data-reveal]           fade/slide-in once when scrolled into view (adds .is-visible)
+ *   [data-draw] svg path    stroke draws itself once when scrolled into view
+ *   [data-window]           soft parallax drift (±14px) of image frames
+ *   [data-progress-track]   "How it works" line that fills with scroll
+ *     [data-progress-fill] [data-progress-step] [data-progress-dot]
+ *   [data-faq] > [data-faq-q] + [data-faq-a]   accordion (one open at a time)
+ *   [data-cal]              appointment picker (radio inputs, name="slot")
+ *   [data-form]             booking form: in-place submit with fresh nonce
+ * Configuration arrives in window.savtaConfig (see inc/assets.php).
+ */
+(function () {
+  'use strict';
+
+  var cfg = window.savtaConfig || {};
+  var i18n = cfg.i18n || {};
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var raf = window.requestAnimationFrame || function (fn) { return setTimeout(fn, 16); };
+
+  function qsa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) { n.className = cls; }
+    if (text !== undefined) { n.textContent = text; }
+    return n;
+  }
+
+  /* ---------- 1. Draw-on-scroll SVG strokes ---------- */
+  function prepDraw() {
+    qsa('[data-draw] svg').forEach(function (svg) {
+      qsa('path', svg).forEach(function (path, idx) {
+        var len = (path.getTotalLength && path.getTotalLength()) || 1;
+        path.style.strokeDasharray = len;
+        if (!path.savtaPrepped) {
+          path.savtaPrepped = true;
+          path.style.strokeDashoffset = reduce ? 0 : len;
+          path.style.transition = 'stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1) ' + (idx * 0.16) + 's';
+        } else if (path.savtaDone) {
+          path.style.strokeDashoffset = '0';
+        }
+      });
+    });
+  }
+
+  /* ---------- 2. Reveal + draw trigger ---------- */
+  function finish(node) {
+    if (node.savtaDone) { return; }
+    node.savtaDone = true;
+    if (node.hasAttribute('data-reveal')) { node.classList.add('is-visible'); }
+    if (node.hasAttribute('data-draw')) {
+      qsa('path', node).forEach(function (p) { p.savtaDone = true; p.style.strokeDashoffset = '0'; });
+    }
+  }
+
+  function initReveal() {
+    var nodes = qsa('[data-reveal], [data-draw]');
+    if (reduce || !('IntersectionObserver' in window)) { nodes.forEach(finish); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { finish(e.target); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.12 });
+    nodes.forEach(function (n) { io.observe(n); });
+    window.addEventListener('scroll', function () {
+      var vh = window.innerHeight;
+      nodes.forEach(function (n) {
+        if (!n.savtaDone && n.getBoundingClientRect().top < vh * 0.9) { finish(n); io.unobserve(n); }
+      });
+    }, { passive: true });
+  }
+
+  /* ---------- 3. Parallax "window" frames ---------- */
+  var windows = [];
+  function parallax() {
+    if (reduce) { return; }
+    var vh = window.innerHeight;
+    windows.forEach(function (f) {
+      var r = f.getBoundingClientRect();
+      if (r.bottom < -300 || r.top > vh + 300) { return; }
+      var p = Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2)));
+      f.style.transform = 'translateY(' + (p * -14).toFixed(2) + 'px)';
+    });
+  }
+
+  /* ---------- 4. "How it works" scroll progress line ---------- */
+  var track = null;
+  function progress() {
+    if (!track) { return; }
+    var fill = track.querySelector('[data-progress-fill]');
+    var r = track.getBoundingClientRect();
+    var anchor = window.innerHeight * 0.55;
+    var p = Math.max(0, Math.min(1, (anchor - r.top) / r.height));
+    if (fill) { fill.style.height = (p * r.height).toFixed(1) + 'px'; }
+    qsa('[data-progress-step]', track).forEach(function (step) {
+      var dot = step.querySelector('[data-progress-dot]');
+      if (!dot) { return; }
+      dot.classList.toggle('is-on', step.getBoundingClientRect().top + 44 < anchor);
+    });
+  }
+
+  /* ---------- 5. FAQ accordion (single open, ARIA-driven) ---------- */
+  function initFaq() {
+    var items = qsa('[data-faq]');
+    function setOpen(item, open) {
+      var btn = item.querySelector('[data-faq-q]');
+      var panel = item.querySelector('[data-faq-a]');
+      var mark = item.querySelector('[data-faq-mark]');
+      item.classList.toggle('is-open', open);
+      if (btn) { btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+      if (panel) { panel.hidden = !open; }
+      if (mark) { mark.textContent = open ? '−' : '+'; }
+    }
+    items.forEach(function (item) {
+      var btn = item.querySelector('[data-faq-q]');
+      if (!btn) { return; }
+      btn.addEventListener('click', function () {
+        var wasOpen = item.classList.contains('is-open');
+        items.forEach(function (o) { setOpen(o, false); });
+        if (!wasOpen) { setOpen(item, true); }
+      });
+    });
+  }
+
+  /* ---------- 6. Appointment picker ---------- */
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function isoLocal(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+
+  function nextDays(count) {
+    var days = cfg.days || {};
+    var out = [];
+    var d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + 1);
+    var guard = 0;
+    while (out.length < count && guard++ < 120) {
+      var name = days[d.getDay()];
+      if (name) {
+        out.push({ label: name + ', ' + d.getDate() + '.' + (d.getMonth() + 1), iso: isoLocal(d) });
+      }
+      d.setDate(d.getDate() + 1);
+    }
+    return out;
+  }
+
+  function initCalendar() {
+    var root = document.querySelector('[data-cal]');
+    if (!root) { return; }
+    var toggle = root.querySelector('[data-cal-toggle]');
+    var panel = root.querySelector('[data-cal-panel]');
+    var list = root.querySelector('[data-cal-days]');
+    var value = root.querySelector('[data-cal-value]');
+    var toggleText = root.querySelector('[data-cal-toggle-text]');
+    var announce = root.querySelector('[data-cal-announce]');
+    var taken = cfg.taken || [];
+    var times = cfg.times || [];
+    if (!toggle || !panel || !list) { return; }
+
+    function open() {
+      panel.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      if (toggleText) { toggleText.textContent = i18n.closeCal || ''; }
+      var first = panel.querySelector('input:not(:disabled)');
+      if (first) { first.focus(); }
+    }
+    function close(refocus) {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+      if (toggleText) { toggleText.textContent = i18n.openCal || ''; }
+      if (refocus) { toggle.focus(); }
+    }
+    function select(label) {
+      if (value) { value.textContent = label; }
+      if (announce) { announce.textContent = (i18n.selected || '%s').replace('%s', label); }
+      toggle.removeAttribute('aria-invalid');
+      var err = document.querySelector('[data-error-for="slot"]');
+      if (err) { err.textContent = ''; }
+      close(true);
+    }
+    function render() {
+      list.textContent = '';
+      nextDays(cfg.dayCount || 4).forEach(function (day, di) {
+        var fs = el('fieldset', 'cal-day');
+        fs.appendChild(el('legend', 'cal-day__label', day.label));
+        var row = el('div', 'cal-day__slots');
+        times.forEach(function (t, ti) {
+          var val = day.iso + ' ' + t;
+          var isTaken = taken.indexOf(val) > -1;
+          var lab = el('label', 'cal-slot');
+          var inp = document.createElement('input');
+          inp.type = 'radio';
+          inp.name = 'slot';
+          inp.value = val;
+          inp.id = 'slot-' + di + '-' + ti;
+          inp.disabled = isTaken;
+          inp.addEventListener('change', function () {
+            if (inp.checked) { select(day.label + ' · ' + t); }
+          });
+          lab.appendChild(inp);
+          lab.appendChild(el('span', '', isTaken ? t + ' · ' + (i18n.taken || '') : t));
+          row.appendChild(lab);
+        });
+        fs.appendChild(row);
+        list.appendChild(fs);
+      });
+    }
+
+    toggle.addEventListener('click', function () { panel.hidden ? open() : close(false); });
+    panel.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { e.preventDefault(); close(true); }
+    });
+    render();
+    close(false);
+  }
+
+  /* ---------- 7. Booking form: in-place submit ---------- */
+  function initForm() {
+    var form = document.querySelector('[data-form]');
+    if (!form || !window.fetch || !window.FormData) { return; }
+    var status = form.querySelector('[data-form-status]');
+    var submit = form.querySelector('[data-submit]');
+    var nonceField = form.querySelector('[data-nonce]');
+
+    function setStatus(msg, isError) {
+      if (!status) { return; }
+      status.textContent = '';
+      if (msg) {
+        var p = el('p', isError ? 'form__error-banner' : '', msg);
+        if (isError) { p.setAttribute('role', 'alert'); }
+        status.appendChild(p);
+      }
+    }
+    function fieldControl(name) {
+      if (name === 'slot') { return form.querySelector('[data-cal-toggle]'); }
+      return form.querySelector('[name="' + name + '"]');
+    }
+    function clearErrors() {
+      qsa('[data-error-for]', form).forEach(function (p) { p.textContent = ''; });
+      qsa('[aria-invalid]', form).forEach(function (c) { c.removeAttribute('aria-invalid'); });
+    }
+    function showErrors(errors, message) {
+      var first = null;
+      Object.keys(errors).forEach(function (name) {
+        var p = form.querySelector('[data-error-for="' + name + '"]');
+        if (p) { p.textContent = errors[name]; }
+        var c = fieldControl(name);
+        if (c) {
+          c.setAttribute('aria-invalid', 'true');
+          if (!first) { first = c; }
+        }
+      });
+      setStatus(message || i18n.fixErrors || '', true);
+      if (first) { first.focus(); }
+    }
+    function setBusy(busy) {
+      form.setAttribute('aria-busy', busy ? 'true' : 'false');
+      if (submit) {
+        submit.disabled = busy;
+        submit.textContent = busy ? (i18n.sending || '') : (i18n.submit || submit.textContent);
+      }
+    }
+    function showThanks() {
+      var card = el('div', 'thanks');
+      card.setAttribute('role', 'status');
+      card.setAttribute('tabindex', '-1');
+      card.innerHTML = '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#4E5A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M8 12.5L11 15.5L16 9.5"/></svg>';
+      card.appendChild(el('p', 'thanks__title', i18n.thanksTitle || ''));
+      card.appendChild(el('p', 'thanks__text', i18n.thanksText || ''));
+      form.parentNode.replaceChild(card, form);
+      card.focus();
+    }
+    function freshNonce() {
+      var fallback = nonceField ? nonceField.value : '';
+      if (!cfg.ajaxUrl) { return Promise.resolve(fallback); }
+      return fetch(cfg.ajaxUrl + '?action=savta_nonce', { credentials: 'same-origin', cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (j) { return (j && j.data && j.data.nonce) || fallback; })
+        .catch(function () { return fallback; });
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      clearErrors();
+      setStatus('');
+      setBusy(true);
+      freshNonce().then(function (nonce) {
+        var fd = new FormData(form);
+        fd.set('savta_nonce', nonce);
+        fd.set('savta_ajax', '1');
+        return fetch(form.getAttribute('action') || cfg.postUrl, {
+          method: 'POST',
+          body: fd,
+          credentials: 'same-origin',
+          headers: { 'Accept': 'application/json' }
+        });
+      }).then(function (r) {
+        return r.json().then(function (body) { return body; });
+      }).then(function (body) {
+        setBusy(false);
+        if (body && body.success) { showThanks(); return; }
+        var data = (body && body.data) || {};
+        showErrors(data.errors || {}, data.message || i18n.genericErr || '');
+      }).catch(function () {
+        setBusy(false);
+        setStatus(i18n.genericErr || '', true);
+      });
+    });
+  }
+
+  /* ---------- Boot ---------- */
+  var ticking = false;
+  function onScroll() {
+    if (ticking) { return; }
+    ticking = true;
+    raf(function () { parallax(); progress(); ticking = false; });
+  }
+
+  function init() {
+    windows = qsa('[data-window]');
+    track = document.querySelector('[data-progress-track]');
+    prepDraw();
+    initReveal();
+    initFaq();
+    initCalendar();
+    initForm();
+    parallax();
+    progress();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', function () { prepDraw(); onScroll(); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
